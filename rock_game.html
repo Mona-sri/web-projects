@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rock Paper Scissors - Best of 5</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #f0f8ff, #dfefff);
+      color: #333;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 30px 0 10px;
+      font-size: 2.8em;
+      color: #003366;
+    }
+
+    .game-container {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+      margin-top: 40px;
+    }
+
+    .option-box {
+      background-color: #ffffff;
+      border: 2px solid #007acc;
+      border-radius: 15px;
+      width: 150px;
+      height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      font-size: 1.2em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s ease, background-color 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .option-box:hover {
+      transform: scale(1.05);
+      background-color: #e0f2ff;
+    }
+
+    .disabled {
+      pointer-events: none;
+      opacity: 0.5;
+    }
+
+    .emoji {
+      font-size: 2.5em;
+      margin-bottom: 8px;
+    }
+
+    #result {
+      margin-top: 40px;
+      font-size: 1.3em;
+      font-weight: bold;
+    }
+
+    #score {
+      margin-top: 15px;
+      font-size: 1.1em;
+    }
+
+    #finalResult {
+      margin-top: 20px;
+      font-size: 1.5em;
+      color: #007700;
+      font-weight: bold;
+    }
+
+    #resetBtn {
+      display: none;
+      margin-top: 25px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #007acc;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    #resetBtn:hover {
+      background-color: #005f99;
+    }
+
+    footer {
+      margin-top: 50px;
+      color: #666;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Rock, Paper, Scissors (Best of 5)</h1>
+  <div class="game-container" id="gameOptions">
+    <div class="option-box" onclick="playGame('rock')">
+      <div class="emoji">🪨</div>
+      Rock
+    </div>
+    <div class="option-box" onclick="playGame('paper')">
+      <div class="emoji">📄</div>
+      Paper
+    </div>
+    <div class="option-box" onclick="playGame('scissors')">
+      <div class="emoji">✂️</div>
+      Scissors
+    </div>
+  </div>
+
+  <p id="result">Make your move!</p>
+  <div id="score">
+    Your Score: <span id="userScore">0</span> |
+    Computer Score: <span id="computerScore">0</span>
+  </div>
+  <div id="finalResult"></div>
+  <button id="resetBtn" onclick="resetGame()">Play Again</button>
+
+  <footer>
+    Rock Paper Scissors Game | First to 3 wins the match! 🏆
+  </footer>
+
+  <script>
+    const choices = ['rock', 'paper', 'scissors'];
+    let userScore = 0;
+    let computerScore = 0;
+
+    const userScoreEl = document.getElementById('userScore');
+    const computerScoreEl = document.getElementById('computerScore');
+    const resultEl = document.getElementById('result');
+    const finalResultEl = document.getElementById('finalResult');
+    const gameOptions = document.getElementById('gameOptions');
+    const resetBtn = document.getElementById('resetBtn');
+
+    function getComputerChoice() {
+      return choices[Math.floor(Math.random() * choices.length)];
+    }
+
+    function determineWinner(userChoice, computerChoice) {
+      if (userChoice === computerChoice) return "It's a tie!";
+
+      const winRules = {
+        rock: 'scissors',
+        paper: 'rock',
+        scissors: 'paper'
+      };
+
+      return winRules[userChoice] === computerChoice
+        ? "You win this round!"
+        : "Computer wins this round!";
+    }
+
+    function playGame(userChoice) {
+      if (userScore >= 3 || computerScore >= 3) return; // game over
+
+      const computerChoice = getComputerChoice();
+      const result = determineWinner(userChoice, computerChoice);
+
+      resultEl.innerText = `You chose ${userChoice}. Computer chose ${computerChoice}. ${result}`;
+
+      if (result.includes("You win")) {
+        userScore++;
+      } else if (result.includes("Computer wins")) {
+        computerScore++;
+      }
+
+      userScoreEl.innerText = userScore;
+      computerScoreEl.innerText = computerScore;
+
+      if (userScore === 3 || computerScore === 3) {
+        endGame();
+      }
+    }
+
+    function endGame() {
+      gameOptions.classList.add("disabled");
+      if (userScore === 3) {
+        finalResultEl.innerText = "🎉 Congratulations! You won the game!";
+      } else {
+        finalResultEl.innerText = "💻 Computer wins the game. Try again!";
+      }
+      resetBtn.style.display = "inline-block";
+    }
+
+    function resetGame() {
+      userScore = 0;
+      computerScore = 0;
+      userScoreEl.innerText = "0";
+      computerScoreEl.innerText = "0";
+      resultEl.innerText = "Make your move!";
+      finalResultEl.innerText = "";
+      resetBtn.style.display = "none";
+      gameOptions.classList.remove("disabled");
+    }
+  </script>
+
+</body>
+</html>
